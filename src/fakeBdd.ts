@@ -1,8 +1,9 @@
 type User = {
   username: string;
   password: string;
-  id: string;
-  cookie: null;
+  id: number;
+  cookie: string | null;
+  darkMode: boolean;
 };
 
 type Users = User[];
@@ -11,20 +12,23 @@ const users: Users = [
   {
     username: "admin",
     password: "admin",
-    id: "0",
+    id: 0,
     cookie: null,
+    darkMode: false,
   },
   {
     username: "member",
     password: "member",
-    id: "1",
+    id: 1,
     cookie: null,
+    darkMode: true,
   },
   {
     username: "better member",
     password: "bettermember",
-    id: "2",
+    id: 2,
     cookie: null,
+    darkMode: false,
   },
 ];
 

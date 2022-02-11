@@ -2,5 +2,14 @@
 
 {% block content %}
   <h1>Hello {{user.username}}</h1>
+  <p>password: {{user.password}}</p>
+  <p>id: {{user.id}}</p>
+  <p>cookie: {{user.cookie}}</p>
   <a href="/disconnect"><button>disconnect</button></a>
+
+  {% if user.darkMode%}
+    <a href="/darkMode"><button>turn dark mode off</button></a>
+  {% else %}
+    <a href="/darkMode"><button>turn dark mode on</button></a>
+  {% endif %}
 {% endblock %}

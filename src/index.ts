@@ -1,6 +1,7 @@
 import express from "express";
 import nunjucks from "nunjucks";
 import cookie from "cookie";
+import { v4 as uuidv4 } from "uuid";
 
 import fakeBdd from "./fakeBdd";
 
@@ -23,7 +24,7 @@ app.get("/", (request, response) => {
   let user = null;
 
   fakeBdd.forEach((element) => {
-    if (element.id === cookies.loggedCookie) {
+    if (element.cookie === cookies.loggedCookie) {
       user = element;
     }
   });
@@ -48,7 +49,7 @@ app.get("/private", (request, response) => {
   let user = null;
 
   fakeBdd.forEach((element) => {
-    if (element.id === cookies.loggedCookie) {
+    if (element.cookie === cookies.loggedCookie) {
       user = element;
     }
   });
@@ -67,12 +68,14 @@ app.post("/handleLogin", formParser, (request, response) => {
 
   fakeBdd.forEach((element) => {
     if (element.username === requestBody.name && element.password === requestBody.password) {
+      const cookieValue = uuidv4();
       response.set(
         "Set-Cookie",
-        cookie.serialize("loggedCookie", element.id, {
+        cookie.serialize("loggedCookie", cookieValue, {
           maxAge: 3600,
         }),
       );
+      element.cookie = cookieValue;
       logged = true;
       return logged;
     } else {
@@ -89,6 +92,14 @@ app.post("/handleLogin", formParser, (request, response) => {
 
 // DECONNECTION //
 app.get("/disconnect", (request, response) => {
+  const cookies = cookie.parse(request.get("cookie") || "");
+
+  fakeBdd.forEach((element) => {
+    if (element.cookie === cookies.loggedCookie) {
+      element.cookie = null;
+    }
+  });
+
   response.set(
     "Set-Cookie",
     cookie.serialize("loggedCookie", "", {
@@ -96,6 +107,23 @@ app.get("/disconnect", (request, response) => {
     }),
   );
   response.redirect("/");
+});
+
+// DARKMODE OPTION //
+app.get("/darkMode", (request, response) => {
+  const cookies = cookie.parse(request.get("cookie") || "");
+
+  fakeBdd.forEach((element) => {
+    if (element.cookie === cookies.loggedCookie) {
+      if (element.darkMode) {
+        element.darkMode = false;
+      } else {
+        element.darkMode = true;
+      }
+    }
+  });
+
+  response.redirect("/private");
 });
 
 app.listen(3000, () => {
