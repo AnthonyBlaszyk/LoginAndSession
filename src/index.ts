@@ -18,7 +18,7 @@ nunjucks.configure("views", {
 
 app.set("view engine", "njk");
 
-// HOME PAGE //
+// Home page //
 app.get("/", (request, response) => {
   const cookies = cookie.parse(request.get("cookie") || "");
   let user = null;
@@ -32,7 +32,7 @@ app.get("/", (request, response) => {
   response.render("home", { user });
 });
 
-// LOGIN PAGE //
+// Login page //
 app.get("/login", (request, response) => {
   const cookies = cookie.parse(request.get("cookie") || "");
 
@@ -43,7 +43,7 @@ app.get("/login", (request, response) => {
   }
 });
 
-// PRIVATE PAGE //
+// Private page //
 app.get("/private", (request, response) => {
   const cookies = cookie.parse(request.get("cookie") || "");
   let user = null;
@@ -61,9 +61,8 @@ app.get("/private", (request, response) => {
   }
 });
 
-// CONNECTION //
+// Connection //
 app.post("/handleLogin", formParser, (request, response) => {
-  console.log(request.body);
   const requestBody = request.body;
 
   fakeBdd.forEach((element) => {
@@ -90,7 +89,7 @@ app.post("/handleLogin", formParser, (request, response) => {
   }
 });
 
-// DECONNECTION //
+// Deconnection //
 app.get("/disconnect", (request, response) => {
   const cookies = cookie.parse(request.get("cookie") || "");
 
@@ -109,7 +108,7 @@ app.get("/disconnect", (request, response) => {
   response.redirect("/");
 });
 
-// DARKMODE OPTION //
+// Darkmode option //
 app.get("/darkMode", (request, response) => {
   const cookies = cookie.parse(request.get("cookie") || "");
 
@@ -124,6 +123,40 @@ app.get("/darkMode", (request, response) => {
   });
 
   response.redirect("/private");
+});
+
+// Register page //
+app.get("/register", (request, response) => {
+  response.render("register");
+});
+
+// Create account //
+app.post("/createAccount", formParser, (request, response) => {
+  const requestBody = request.body;
+  let isAlreadyRegistered = false;
+
+  fakeBdd.forEach((element) => {
+    if (element.username === requestBody.name) {
+      console.log(isAlreadyRegistered);
+      return (isAlreadyRegistered = true);
+    }
+  });
+
+  console.log(isAlreadyRegistered);
+  if (isAlreadyRegistered) {
+    response.redirect("/register");
+    isAlreadyRegistered = false;
+  } else {
+    fakeBdd.push({
+      username: requestBody.name,
+      password: requestBody.password,
+      id: 6,
+      cookie: null,
+      darkMode: false,
+    });
+
+    response.redirect("/login");
+  }
 });
 
 app.listen(3000, () => {
