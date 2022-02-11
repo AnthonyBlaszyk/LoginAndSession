@@ -1,0 +1,15 @@
+{% extends "layouts.njk" %}
+
+{% block content %}
+  <h1>Hello</h1>
+
+  {% if user === null %}
+    <a href="/login"><button>Login</button></a>
+  {% else %}
+    <a href="/disconnect"><button>disconnect</button></a>
+    <a href="/private"><button>Personnal space</button></a>
+  {% endif %}
+
+  {{user.username}}
+
+{% endblock %}
